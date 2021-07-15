@@ -1,4 +1,4 @@
-# fireblogs
+# bloghub
 
 ## Project setup
 ```
