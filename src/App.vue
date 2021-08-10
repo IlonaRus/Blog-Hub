@@ -11,6 +11,8 @@
 <script>
 import Navigation from "./components/Navigation";
 import Footer from "./components/Footer";
+import firebase from "firebase/app";
+import "firebase/auth";
 
 export default {
   name: "app",
@@ -24,7 +26,16 @@ export default {
     };
   },
   created() {
+    firebase.auth().onAuthStateChanged((user) => {
+      this.$store.commit("updateUser", user);
+      if (user) {
+        this.$store.dispatch("getCurrentUser");
+        console.log(this.$store.state.profileEmail);
+      }
+    })
     this.checkRoute();
+    console.log(firebase.auth().currentUser);
+
   },
   mounted() {},
   methods: {
