@@ -17,6 +17,7 @@ export default new Vuex.Store({
 
     editPost: null,
     user: null,
+    profileAdmin: null,
     profileEmail: null,
     profileFirstName: null,
     profileLastName: null,
@@ -31,6 +32,10 @@ export default new Vuex.Store({
     },
     updateUser(state, doc) {
       state.user = doc;
+    },
+    setProfileAdmin(state, payload) {
+      state.profileAdmin = payload;
+      console.log(state.profileAdmin);
     },
     setProfileInfo(state, doc) {
       state.profileId = doc.id;
@@ -55,12 +60,14 @@ export default new Vuex.Store({
     },
   },
   actions: {
-    async getCurrentUser({ commit }) {
+    async getCurrentUser({ commit }, user) {
       const dataBase = await database.collection("users").doc(firebase.auth().currentUser.uid);
       const databaseResults = await dataBase.get();
       commit("setProfileInfo", databaseResults);
       commit("setProfileInitials");
-      console.log(databaseResults);
+      const token = await user.getIdTokenResult();
+      const admin = await token.claims.admin;
+      commit('setProfileAdmin', admin);
     },
 
     async updateUserSettings({ commit, state }) {

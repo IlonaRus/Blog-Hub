@@ -7,7 +7,7 @@
         <div class="input">
           <input placeholder="Enter user email to make them an admin" type="text" id="addAdmins" v-model="adminEmail" />
         </div>
-        <span>{{ this.functionMsg }}</span>
+        <span>{{ this.functionMessage }}</span>
         <button @click="addAdmin" class="button">Submit</button>
       </div>
     </div>
@@ -15,6 +15,9 @@
 </template>
 
 <script>
+import firebase from "firebase/app";
+import "firebase/functions";
+
 export default {
   name: "Admin",
   data() {
@@ -23,6 +26,14 @@ export default {
       functionMessage: null,
     };
   },
+  methods: {
+    async addAdmin() {
+      const addAdmin = await firebase.functions().httpsCallable('addAdminRole');
+      const result = await addAdmin({ email: this.adminEmail });
+
+      this.functionMessage = result.data.message;
+    }
+  }
 };
 </script>
 
