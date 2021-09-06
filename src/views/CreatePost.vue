@@ -6,16 +6,33 @@
         <p><span>Error:</span>{{ this.errorMessage }}</p>
       </div>
       <div class="blog-info">
-        <input type="text" placeholder="Enter Blog Title" v-model="blogTitle">
+        <input type="text" placeholder="Enter Blog Title" v-model="blogTitle" />
         <div class="upload-file">
           <label for="blog-photo">Upload Cover Photo</label>
-          <input type="file" ref="blogPhoto" id="blog-photo" @change="fileChange" accept=".png, .jpg, .jpeg">
-          <button @click="openPreview" class="preview" :class="{ 'button-inactive': !this.$store.state.blogPhotoFileURL }">Preview Photo</button>
+          <input
+            type="file"
+            ref="blogPhoto"
+            id="blog-photo"
+            @change="fileChange"
+            accept=".png, .jpg, .jpeg"
+          />
+          <button
+            @click="openPreview"
+            class="preview"
+            :class="{ 'button-inactive': !this.$store.state.blogPhotoFileURL }"
+          >
+            Preview Photo
+          </button>
           <span>File Chosen: {{ this.$store.state.blogPhotoName }}</span>
         </div>
       </div>
       <div class="editor">
-        <vue-editor :editorOptions="editorSettings" v-model="blogHTML" useCustomImageHandler />
+        <vue-editor
+          :editorOptions="editorSettings"
+          v-model="blogHTML"
+          useCustomImageHandler
+          @image-added="imageHandler"
+        />
       </div>
       <div class="blog-actions">
         <button>Publish Blog</button>
@@ -28,8 +45,8 @@
 <script>
 import BlogCoverPreview from "../components/BlogCoverPreview";
 // import Loading from "../components/Loading";
-// import firebase from "firebase/app";
-// import "firebase/storage";
+import firebase from "firebase/app";
+import "firebase/storage";
 // import db from "../firebase/firebaseInit";
 import Quill from "quill";
 window.Quill = Quill;
@@ -64,6 +81,21 @@ export default {
 
     openPreview() {
       this.$store.commit("openPhotoPreview");
+    },
+
+    imageHandler(file, Editor, cursorLocation, resetUploader) {
+      const storageReference = firebase.storage().ref();
+      const documentReference = storageReference.child(`documents/blogPostPhotos/${file.name}`);
+      documentReference.put(file).on("state_changed", (snapshot) => {
+        console.log(snapshot);
+      }, (error) => {
+        console.log(error);
+      }, async () => {
+        const downloadURL = await documentReference.getDownloadURL();
+        Editor.insertEmbed(cursorLocation, "image", downloadURL);
+        resetUploader();
+      }
+      );
     },
   },
   computed: {
