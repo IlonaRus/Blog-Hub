@@ -1,5 +1,6 @@
 <template>
   <div class="create-post">
+    <BlogCoverPreview v-show="this.$store.state.blogPhotoPreview" />
     <div class="container">
       <div :class="{ invisible: !error }" class="error-message">
         <p><span>Error:</span>{{ this.errorMessage }}</p>
@@ -9,7 +10,7 @@
         <div class="upload-file">
           <label for="blog-photo">Upload Cover Photo</label>
           <input type="file" ref="blogPhoto" id="blog-photo" @change="fileChange" accept=".png, .jpg, .jpeg">
-          <button class="preview" :class="{ 'button-inactive': !this.$store.state.blogPhotoFileURL }">Preview Photo</button>
+          <button @click="openPreview" class="preview" :class="{ 'button-inactive': !this.$store.state.blogPhotoFileURL }">Preview Photo</button>
           <span>File Chosen: {{ this.$store.state.blogPhotoName }}</span>
         </div>
       </div>
@@ -25,7 +26,7 @@
 </template>
 
 <script>
-// import BlogCoverPreview from "../components/BlogCoverPreview";
+import BlogCoverPreview from "../components/BlogCoverPreview";
 // import Loading from "../components/Loading";
 // import firebase from "firebase/app";
 // import "firebase/storage";
@@ -50,13 +51,20 @@ export default {
       }
     }
   },
+  components: {
+    BlogCoverPreview,
+  },
   methods: {
     fileChange() {
       this.file = this.$refs.blogPhoto.files[0];
       const fileName = this.file.name;
       this.$store.commit("fileNameChange", fileName);
       this.$store.commit("createFileURL", URL.createObjectURL(this.file));
-    }
+    },
+
+    openPreview() {
+      this.$store.commit("openPhotoPreview");
+    },
   },
   computed: {
     profileId() {
