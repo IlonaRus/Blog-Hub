@@ -14,6 +14,8 @@ export default new Vuex.Store({
       { blogTitle: "Blog Card 3", blogCoverPhoto: "stock-3", blogDate: "July 22, 2021" },
       { blogTitle: "Blog Card 4", blogCoverPhoto: "stock-4", blogDate: "July 23, 2021" },
     ],
+    blogPosts: [],
+    postLoaded: null,
     blogHTML: "Write your blog title here...",
     blogTitle: "",
     blogPhotoName: "",
@@ -28,6 +30,14 @@ export default new Vuex.Store({
     profileUsername: null,
     profileId: null,
     profileInitials: null,
+  },
+  getters: {
+    blogPostsFeed(state) {
+      return state.blogPosts.slice(0, 2);
+    },
+    blogPostsCards(state) {
+      return state.blogPosts.slice(2, 6);
+    }
   },
   mutations: {
     newBlogPost(state, payload) {
@@ -87,6 +97,25 @@ export default new Vuex.Store({
       const token = await user.getIdTokenResult();
       const admin = await token.claims.admin;
       commit('setProfileAdmin', admin);
+    },
+
+    async getPost({ state }) {
+      const dataBase = await database.collection('blogPosts').orderBy('date', 'desc');
+      const databaseResults = await dataBase.get();
+      databaseResults.forEach((doc) => {
+        if (!state.blogPosts.some((post) => post.blogID === doc.id)) {
+          const data = {
+            blogID: doc.data().blogID,
+            blogHTML: doc.data().blogHTML,
+            blogCoverPhoto: doc.data().blogCoverPhoto,
+            blogTitle: doc.data().blogTitle,
+            blogDate: doc.data().date,
+          };
+          state.blogPosts.push(data);
+        }
+      });
+      state.postLoaded = true;
+      console.log(state.blogPosts);
     },
 
     async updateUserSettings({ commit, state }) {
