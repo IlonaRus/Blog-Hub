@@ -1,6 +1,7 @@
 <template>
   <div class="create-post">
     <BlogCoverPreview v-show="this.$store.state.blogPhotoPreview" />
+    <Loading v-show="loading" />
     <div class="container">
       <div :class="{ invisible: !error }" class="error-message">
         <p><span>Error:</span>{{ this.errorMessage }}</p>
@@ -44,7 +45,7 @@
 
 <script>
 import BlogCoverPreview from "../components/BlogCoverPreview";
-// import Loading from "../components/Loading";
+import Loading from "../components/Loading";
 import firebase from "firebase/app";
 import "firebase/storage";
 import db from "../firebase/firebaseInit";
@@ -61,6 +62,7 @@ export default {
       file: null,
       error: null,
       errorMessage: null,
+      loading: null,
       editorSettings: {
         modules: {
           imageResize: {},
@@ -70,6 +72,7 @@ export default {
   },
   components: {
     BlogCoverPreview,
+    Loading,
   },
   methods: {
     fileChange() {
@@ -107,6 +110,7 @@ export default {
     uploadBlog() {
       if (this.blogTitle.length !== 0 && this.blogHTML.length !== 0) {
         if (this.file) {
+          this.loading = true;
           const storageReference = firebase.storage().ref();
           const documentReference = storageReference.child(
             `documents/BlogCoverPhotos/${this.$store.state.blogPhotoName}`
@@ -119,6 +123,7 @@ export default {
             (error) => {
               //
               console.log(error);
+              this.loading = false;
             },
             async () => {
               const downloadURL = await documentReference.getDownloadURL();
@@ -134,6 +139,7 @@ export default {
                 profileId: this.profileId,
                 date: timestamp,
               });
+              this.loading = false;
               this.$router.push({ name: "ViewBlog" });
             },
           );
