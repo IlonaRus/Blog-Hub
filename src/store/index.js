@@ -53,6 +53,9 @@ export default new Vuex.Store({
       state.editPost = payload;
       console.log(state.editPost);
     },
+    filterBlogPost(state, payload) {
+      state.blogPosts = state.blogPosts.filter(post => post.blogID != payload)
+    },
     updateUser(state, doc) {
       state.user = doc;
     },
@@ -91,6 +94,12 @@ export default new Vuex.Store({
       const token = await user.getIdTokenResult();
       const admin = await token.claims.admin;
       commit('setProfileAdmin', admin);
+    },
+
+    async deletePost({ commit }, payload) {
+      const getPost = await database.collection('blogPosts').doc(payload);
+      await getPost.delete();
+      commit('filterBlogPost', payload);
     },
 
     async getPost({ state }) {
