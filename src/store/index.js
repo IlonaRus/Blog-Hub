@@ -102,12 +102,6 @@ export default new Vuex.Store({
       commit('setProfileAdmin', admin);
     },
 
-    async deletePost({ commit }, payload) {
-      const getPost = await database.collection('blogPosts').doc(payload);
-      await getPost.delete();
-      commit('filterBlogPost', payload);
-    },
-
     async getPost({ state }) {
       const dataBase = await database.collection('blogPosts').orderBy('date', 'desc');
       const databaseResults = await dataBase.get();
@@ -119,11 +113,23 @@ export default new Vuex.Store({
             blogCoverPhoto: doc.data().blogCoverPhoto,
             blogTitle: doc.data().blogTitle,
             blogDate: doc.data().date,
+            blogCoverPhotoName: doc.data().blogCoverPhotoName,
           };
           state.blogPosts.push(data);
         }
       });
       state.postLoaded = true;
+    },
+
+    async updatePost({ commit, dispatch }, payload){
+      commit('filterBlogPost', payload);
+      await dispatch('getPost');
+    },
+
+    async deletePost({ commit }, payload) {
+      const getPost = await database.collection('blogPosts').doc(payload);
+      await getPost.delete();
+      commit('filterBlogPost', payload);
     },
 
     async updateUserSettings({ commit, state }) {
