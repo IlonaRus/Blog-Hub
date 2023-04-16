@@ -1,4 +1,4 @@
-# bloghub
+# Blog Hub
 
 ## Project setup
 ```
