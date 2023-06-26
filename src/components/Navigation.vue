@@ -2,41 +2,53 @@
   <header>
     <nav class="container">
       <div class="branding">
-        <router-link class="header" :to="{ name: 'Home' }">BlogHub</router-link>
+        <RouterLink class="header" :to="{ name: 'Home' }">BlogHub</RouterLink>
       </div>
       <div class="nav-links">
         <ul v-show="!mobile">
-          <router-link class="link" :to="{ name: 'Home' }">Home</router-link>
-          <router-link class="link" :to="{ name: 'Blogs' }">Blogs</router-link>
-          <router-link v-if="admin" class="link" :to="{ name: 'CreatePost' }">Create Post</router-link>
-          <router-link v-if="!user" class="link" :to="{ name: 'Login' }">Login/Register</router-link>
+          <RouterLink class="link" :to="{ name: 'Home' }">Home</RouterLink>
+          <RouterLink class="link" :to="{ name: 'Blogs' }">Blogs</RouterLink>
+          <RouterLink v-if="admin" class="link" :to="{ name: 'CreatePost' }"
+            >Create Post</RouterLink
+          >
+          <RouterLink v-if="!user" class="link" :to="{ name: 'Login' }"
+            >Login/Register</RouterLink
+          >
         </ul>
-        <div v-if="user"  @click="toggleProfileMenu" class="profile" ref="profile">
+        <div
+          v-if="user"
+          @click="toggleProfileMenu"
+          class="profile"
+          ref="profile"
+        >
           <span>{{ this.$store.state.profileInitials }}</span>
           <div v-show="profileMenu" class="profile-menu">
             <div class="info">
               <p class="initials">{{ this.$store.state.profileInitials }}</p>
               <div class="right">
-                <p>{{ this.$store.state.profileFirstName }} {{ this.$store.state.profileLastName }}</p>
+                <p>
+                  {{ this.$store.state.profileFirstName }}
+                  {{ this.$store.state.profileLastName }}
+                </p>
                 <p>{{ this.$store.state.profileUsername }}</p>
                 <p>{{ this.$store.state.profileEmail }}</p>
               </div>
             </div>
             <div class="options">
               <div class="option">
-                <router-link class="option" :to="{ name: 'Profile' }">
+                <RouterLink class="option" :to="{ name: 'Profile' }">
                   <userIcon class="icon" />
                   <p>Profile</p>
-                </router-link>
+                </RouterLink>
               </div>
               <div v-if="admin" class="option">
-                <router-link class="option" :to="{ name: 'Admin' }">
-                  <adminIcon class="icon" />
+                <RouterLink class="option" :to="{ name: 'Admin' }">
+                  <AdminIcon class="icon" />
                   <p>Admin</p>
-                </router-link>
+                </RouterLink>
               </div>
               <div @click="signOut" class="option">
-                <signOutIcon class="icon" />
+                <SignOutIcon class="icon" />
                 <p>Sign Out</p>
               </div>
             </div>
@@ -44,13 +56,17 @@
         </div>
       </div>
     </nav>
-    <menuIcon @click="toggleMobileNav" class="menu-icon" v-show="mobile" />
+    <MenuIcon @click="toggleMobileNav" class="menu-icon" v-show="mobile" />
     <transition name="mobile-nav">
       <ul class="mobile-nav" v-show="mobileNav">
-        <router-link class="link" :to="{ name: 'Home' }">Home</router-link>
-        <router-link class="link" :to="{ name: 'Blogs' }">Blogs</router-link>
-        <router-link v-if="admin" class="link" :to="{ name: 'CreatePost' }">Create Post</router-link>
-        <router-link v-if="!user" class="link" :to="{ name: 'Login' }">Login/Register</router-link>
+        <RouterLink class="link" :to="{ name: 'Home' }">Home</RouterLink>
+        <RouterLink class="link" :to="{ name: 'Blogs' }">Blogs</RouterLink>
+        <RouterLink v-if="admin" class="link" :to="{ name: 'CreatePost' }"
+          >Create Post</RouterLink
+        >
+        <RouterLink v-if="!user" class="link" :to="{ name: 'Login' }"
+          >Login/Register</RouterLink
+        >
       </ul>
     </transition>
   </header>
@@ -61,6 +77,7 @@ import menuIcon from "../assets/Icons/bars-regular.svg";
 import userIcon from "../assets/Icons/user-alt-light.svg";
 import adminIcon from "../assets/Icons/user-crown-light.svg";
 import signOutIcon from "../assets/Icons/sign-out-alt-regular.svg";
+import { mapState } from "vuex";
 import firebase from "firebase/app";
 import "firebase/auth";
 
@@ -80,8 +97,12 @@ export default {
       windowWidth: null,
     };
   },
+  computed: ...mapState([
+    "user",
+    "profileAdmin",
+  ]),
   created() {
-    window.addEventListener('resize', this.checkScreenSize);
+    window.addEventListener("resize", this.checkScreenSize);
     this.checkScreenSize();
   },
   methods: {
@@ -198,7 +219,8 @@ header {
           right: 0;
           width: 250px;
           background-color: #303030;
-          box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+          box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
+            0 2px 4px -1px rgba(0, 0, 0, 0.06);
 
           .info {
             display: flex;
@@ -292,7 +314,7 @@ header {
   .mobile-nav-enter-active,
   .mobile-nav-leave-active {
     transition: all 1s ease;
-  } 
+  }
 
   .mobile-nav-enter {
     transform: translateX(-250px);
@@ -305,7 +327,6 @@ header {
   .mobile-nav-leave-to {
     transform: translateX(-250px);
   }
-
 }
 </style>
 

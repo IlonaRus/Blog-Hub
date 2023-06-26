@@ -13,10 +13,10 @@
     <div v-if="!user" class="updates">
       <div class="container">
         <h2>Never miss a post. Register for your free account today!</h2>
-        <router-link class="router-button" to="#">
+        <RouterLink class="router-button" to="#">
           Register for BlogHub
           <Arrow class="arrow arrow-light" />
-        </router-link>
+        </RouterLink>
       </div>
     </div>
   </div>
